@@ -1,5 +1,16 @@
 # BookLocal
 
-BookLocal local services booking platform.
+BookLocal is a Pietermaritzburg local-services marketplace with a locked pink, black, mint and off-white design system.
 
-Implementation will begin after the live-site structure is confirmed.
+## Full marketplace
+
+The current build includes Supabase discovery, category/city search, map UI, customer/business authentication, dynamic business/service pages, live availability, confirmed pay-at-venue bookings, cancellation, rescheduling, customer dashboards, reviews after completion, business dashboards, and admin tables.
+
+## Development
+
+```bash
+pnpm install
+pnpm run dev
+```
+
+Supabase project: `fohsdblvlgeijzpbjhle`.
