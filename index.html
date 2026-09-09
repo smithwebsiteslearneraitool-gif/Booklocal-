@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BookLocal — local services, made simple." />
+  <title>BookLocal — local services, made simple</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <header class="site-header">
+    <a class="brand" href="#home" data-route="home" aria-label="BookLocal home"><span class="brand-mark">✦</span><span>BookLocal</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#discover" data-route="discover">Explore</a>
+      <a href="#business" data-route="business">For businesses</a>
+      <a href="#account" data-route="account">My bookings</a>
+      <button class="button button-dark button-small" data-route="business">List your business <span>→</span></button>
+    </nav>
+    <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="site-footer">
+    <div><a class="brand" href="#home" data-route="home"><span class="brand-mark">✦</span><span>BookLocal</span></a><p>Local services, made simple.</p></div>
+    <div class="footer-links"><a href="#about" data-route="about">About</a><a href="#contact" data-route="contact">Contact</a><a href="#terms" data-route="terms">Terms</a><a href="#privacy" data-route="privacy">Privacy</a></div>
+    <p class="copyright">© 2026 BookLocal</p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
