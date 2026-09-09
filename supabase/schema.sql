@@ -6,7 +6,7 @@ create extension if not exists pgcrypto;
 create extension if not exists btree_gist;
 
 create type booking_status as enum ('pending','confirmed','completed','cancelled','rescheduled');
-create type payment_status as enum ('not_required','pending','paid','failed','refunded');
+create type payment_status as enum ('not_required','unpaid','pending','pending_payment','paid','failed','refund_pending','refunded');
 
 create table if not exists customers (
   id uuid primary key default gen_random_uuid(),
@@ -72,6 +72,11 @@ create table if not exists bookings (
   payment_status payment_status not null default 'not_required',
   paystack_ref text unique,
   total_price numeric(12,2) not null check (total_price >= 0),
+  cancelled_at timestamptz,
+  cancel_reason text,
+  rescheduled_from date,
+  reschedule_count integer not null default 0,
+  payment_note text,
   created_at timestamptz not null default now(),
   check (start_time < end_time)
 );
@@ -99,6 +104,7 @@ create table if not exists payments (
   paystack_ref text not null unique,
   amount numeric(12,2) not null check (amount >= 0),
   status payment_status not null default 'pending',
+  refund_ref text,
   created_at timestamptz not null default now()
 );
 
@@ -166,3 +172,20 @@ create policy "reviews public read" on reviews for select using (true);
 create policy "customers create own reviews" on reviews for insert with check (customer_id = auth.uid());
 create policy "favourites own rows" on favourites for all using (customer_id = auth.uid()) with check (customer_id = auth.uid());
 create policy "payments own booking read" on payments for select using (exists (select 1 from bookings b where b.id = booking_id and b.customer_id = auth.uid()));
+
+-- Business owners can manage only their own operational records.
+create policy "businesses read own bookings" on bookings for select using (business_id = auth.uid());
+create policy "businesses update own bookings" on bookings for update using (business_id = auth.uid()) with check (business_id = auth.uid());
+create policy "businesses manage own services" on services for all using (business_id = auth.uid()) with check (business_id = auth.uid());
+create policy "businesses manage own hours" on business_hours for all using (business_id = auth.uid()) with check (business_id = auth.uid());
+create policy "businesses manage own blocked times" on blocked_times for all using (business_id = auth.uid()) with check (business_id = auth.uid());
+
+-- Admin access is restricted to the designated account email.
+create or replace function is_booklocal_admin()
+returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce(auth.jwt() ->> 'email', '') = 'admin@booklocal.co.za';
+$$;
+create policy "admin full customer access" on customers for all using (is_booklocal_admin()) with check (is_booklocal_admin());
+create policy "admin full business access" on businesses for all using (is_booklocal_admin()) with check (is_booklocal_admin());
+create policy "admin full booking access" on bookings for all using (is_booklocal_admin()) with check (is_booklocal_admin());
+create policy "admin delete reviews" on reviews for delete using (is_booklocal_admin());
