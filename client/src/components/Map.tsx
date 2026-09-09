@@ -91,22 +91,37 @@ const FORGE_BASE_URL =
   import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
+const MAPS_SCRIPT_ID = "booklocal-google-maps-script";
+let mapsLoader: Promise<void> | null = null;
 
-function loadMapScript() {
-  return new Promise(resolve => {
+function loadMapScript(): Promise<void> {
+  if (window.google?.maps) return Promise.resolve();
+  if (mapsLoader) return mapsLoader;
+
+  mapsLoader = new Promise((resolve, reject) => {
+    const existing = document.getElementById(MAPS_SCRIPT_ID) as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("Failed to load Google Maps script")), { once: true });
+      return;
+    }
+
     const script = document.createElement("script");
+    script.id = MAPS_SCRIPT_ID;
     script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
     script.async = true;
+    script.defer = true;
     script.crossOrigin = "anonymous";
-    script.onload = () => {
-      resolve(null);
-      script.remove(); // Clean up immediately
-    };
+    script.onload = () => resolve();
     script.onerror = () => {
-      console.error("Failed to load Google Maps script");
+      mapsLoader = null;
+      script.remove();
+      reject(new Error("Failed to load Google Maps script"));
     };
     document.head.appendChild(script);
   });
+
+  return mapsLoader;
 }
 
 interface MapViewProps {
@@ -126,11 +141,17 @@ export function MapView({
   const map = useRef<google.maps.Map | null>(null);
 
   const init = usePersistFn(async () => {
-    await loadMapScript();
+    try {
+      await loadMapScript();
+    } catch (error) {
+      console.error(error);
+      return;
+    }
     if (!mapContainer.current) {
       console.error("Map container not found");
       return;
     }
+    if (!window.google?.maps) return;
     map.current = new window.google.maps.Map(mapContainer.current, {
       zoom: initialZoom,
       center: initialCenter,
