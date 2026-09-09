@@ -75,3 +75,9 @@ revoke all on function public.cancel_booking(uuid) from public; grant execute on
 revoke all on function public.reschedule_booking(uuid,date,time,time) from public; grant execute on function public.reschedule_booking(uuid,date,time,time) to authenticated;
 
 -- Seed records are intentionally managed separately in the deployment migration so they can be replaced without touching bookings.
+
+-- Neutral test marketplace records, all seeded services at the R20 minimum.
+update public.businesses set name='PMB Cuts', category='Barber', city='Pietermaritzburg', address='Scottsville, Pietermaritzburg', price_from=20, is_active=true where id='11111111-1111-4111-8111-111111111111';
+update public.businesses set name='PMB Beauty Spot', category='Beauty', city='Pietermaritzburg', address='Hayfields, Pietermaritzburg', price_from=20, is_active=true where id='22222222-2222-4222-8222-222222222222';
+update public.businesses set name='PMB Plumbing Help', category='Plumbing', city='Pietermaritzburg', address='Central PMB', price_from=20, is_active=true where id='33333333-3333-4333-8333-333333333333';
+update public.services set price=20 where business_id in ('11111111-1111-4111-8111-111111111111','22222222-2222-4222-8222-222222222222','33333333-3333-4333-8333-333333333333');

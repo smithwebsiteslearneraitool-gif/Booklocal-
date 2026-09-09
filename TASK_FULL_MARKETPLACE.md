@@ -4,7 +4,7 @@
 
 BookLocal now uses the locked off-white, hot-pink, mint, light-pink and black design system across the homepage, business pages, booking form, account pages, dashboards and admin page. The homepage includes the original hero, search and Pietermaritzburg selector, category filters, nearby map section, community card, business cards and footer links.
 
-The marketplace reads active businesses and services from Supabase and includes the seeded Elite Cuts, Glow Beauty and Fix-It Plumbing listings. Business pages show live services, prices in ZAR, duration and ratings. Booking is service-first, date-constrained, timezone-aware and pay-at-venue only.
+The marketplace reads active businesses and services from Supabase and includes the seeded PMB Cuts, PMB Beauty Spot and PMB Plumbing Help listings. Business pages show live services, prices in ZAR, duration and ratings. Booking is service-first, date-constrained, timezone-aware and pay-at-venue only. All public marketplace prices display a minimum of From R20, while businesses can set any starting price at or above R20.
 
 Customer authentication and business authentication use Supabase Auth. Profiles store roles, customer sign-up records are mirrored into the legacy customers table for foreign-key compatibility, and admin roles cannot be created through public sign-up. Customer routes are protected by the customer profile; business dashboard access requires a business profile; admin.html requires an admin profile.
 
@@ -12,15 +12,15 @@ Booking creation, cancellation and rescheduling use security-definer Supabase RP
 
 ## Verification
 
-The production build passed with `pnpm run build`. Public REST reads returned three active Pietermaritzburg businesses and six active services. The availability RPC returned an open future slot for Elite Cuts and verified six open days plus Sunday closed. An unauthenticated booking RPC was rejected with `Sign in required`. Visual verification covered the homepage, business page, booking page, auth page and customer dashboard.
+The production build passed with `pnpm run build`. Public REST reads returned three active Pietermaritzburg businesses and six active services. The availability RPC returned an open future slot for PMB Cuts and verified six open days plus Sunday closed. An unauthenticated booking RPC was rejected with `Sign in required`. Visual verification covered the homepage, business page, booking page, auth page and customer dashboard.
 
 ## Seeded records
 
 | Business | Category | Area | Services |
 |---|---|---|---|
-| Elite Cuts | Barber | Scottsville | Haircut — R150 / 30 minutes; Beard — R80 / 15 minutes |
-| Glow Beauty | Beauty | Hayfields | Gel Nails — R250 / 60 minutes; Lashes — R350 / 90 minutes |
-| Fix-It Plumbing | Plumbing | Central PMB | Leak Repair — R500 / 60 minutes; Geyser — R400 / 45 minutes |
+| PMB Cuts | Barber | Scottsville | Haircut — From R20 / 30 minutes; Beard — From R20 / 15 minutes |
+| PMB Beauty Spot | Beauty | Hayfields | Gel Nails — From R20 / 60 minutes; Lashes — From R20 / 90 minutes |
+| PMB Plumbing Help | Plumbing | Central PMB | Leak Repair — From R20 / 60 minutes; Geyser — From R20 / 45 minutes |
 
 All three businesses operate Monday–Saturday from 08:00–18:00 and are closed Sunday.
 
