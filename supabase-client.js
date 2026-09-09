@@ -9,6 +9,12 @@ export const supabase = SUPABASE_URL && SUPABASE_ANON_KEY
 
 export const isSupabaseConfigured = () => Boolean(supabase);
 
+export const formatZar = amount => new Intl.NumberFormat('en-ZA', {
+  style: 'currency',
+  currency: 'ZAR',
+  maximumFractionDigits: 0
+}).format(Number(amount));
+
 const toMinutes = value => {
   const [hours, minutes] = String(value).slice(0, 5).split(':').map(Number);
   return hours * 60 + minutes;
