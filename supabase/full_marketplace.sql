@@ -88,3 +88,6 @@ alter table public.businesses add column if not exists longitude double precisio
 update public.businesses set name='PMB Cuts',category='Barber',city='Pietermaritzburg',address='Scottsville',price_from=20,latitude=-29.8587,longitude=30.3679,is_active=true where name in ('PMB Cuts','Elite Cuts') or address ilike '%Scottsville%';
 update public.businesses set name='PMB Beauty Spot',category='Beauty',city='Pietermaritzburg',address='Hayfields',price_from=20,latitude=-29.8670,longitude=30.3810,is_active=true where name in ('PMB Beauty Spot','Glow Beauty') or address ilike '%Hayfields%';
 update public.businesses set name='PMB Help',category='Plumbing/Cleaning',city='Pietermaritzburg',address='Central PMB',price_from=20,latitude=-29.6006,longitude=30.3796,is_active=true where name in ('PMB Plumbing Help','Fix-It Plumbing') or address ilike '%Central%';
+
+-- Keep one clean PMB demo listing after the worldwide seed; legacy test rows are hidden.
+update public.businesses set is_active=false where id in ('22222222-2222-4222-8222-222222222222','33333333-3333-4333-8333-333333333333');

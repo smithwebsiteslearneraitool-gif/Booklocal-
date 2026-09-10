@@ -166,6 +166,7 @@ export function MapView({
       streetViewControl: true,
       mapId: "DEMO_MAP_ID",
     });
+    if (navigator.geolocation) navigator.geolocation.getCurrentPosition(({ coords }) => { map.current?.setCenter({ lat: coords.latitude, lng: coords.longitude }); map.current?.setZoom(12); }, () => undefined);
     if (onMapReady) {
       onMapReady(map.current);
     }
@@ -186,7 +187,7 @@ export function MapView({
         title: business.name,
         icon: { path: window.google!.maps.SymbolPath.CIRCLE, scale: 9, fillColor: "#E9305E", fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 3 },
       });
-      const info = new window.google!.maps.InfoWindow({ content: `<div style="font-family:Arial,sans-serif;padding:6px 4px;min-width:150px"><strong>${business.name}</strong><br><span>${business.category} · From R${Math.max(20, Number(business.price_from || 20))}</span><br><small>${business.address || business.city || "Pietermaritzburg"}</small></div>` });
+      const info = new window.google!.maps.InfoWindow({ content: `<div style="font-family:Arial,sans-serif;padding:6px 4px;min-width:150px"><strong>${business.name}</strong><br><span>${business.category} · From R${Math.max(20, Number(business.price_from || 20))}</span><br><small>${business.address || business.city || "Global marketplace"}</small></div>` });
       marker.addListener("click", () => info.open({ map: map.current!, anchor: marker }));
       return marker;
     });

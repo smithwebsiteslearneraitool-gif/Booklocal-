@@ -6,11 +6,12 @@ export const supabase = createClient(
 );
 
 export type Profile = { id: string; role: "customer" | "business" | "admin"; full_name: string | null; phone: string | null; city: string | null };
-export type Business = { id: string; name: string; category: string; city: string | null; address: string | null; whatsapp: string | null; description: string | null; is_active: boolean; rating_avg: number; price_from: number; latitude?: number | null; longitude?: number | null };
+export type Business = { id: string; name: string; category: string; city: string | null; address: string | null; whatsapp: string | null; description: string | null; is_active: boolean; rating_avg: number; price_from: number; currency?: string | null; latitude?: number | null; longitude?: number | null };
 export type Service = { id: string; business_id: string; name: string; price: number; duration_minutes: number; is_active: boolean };
 export type Booking = { id: string; customer_id: string; business_id: string; service_id: string; date: string; booking_date: string | null; start_time: string; end_time: string; status: string; total_price: number; notes: string | null; businesses?: Business; services?: Service };
 
 export const formatZar = (value: number) => new Intl.NumberFormat("en-ZA", { style: "currency", currency: "ZAR", maximumFractionDigits: 0 }).format(value);
+export const formatPrice = (value: number, currency = "ZAR") => { const symbols: Record<string, string> = { ZAR: "R", GBP: "£", USD: "$", EUR: "€", NGN: "₦", KES: "KSh", AUD: "A$", CAD: "C$", INR: "₹" }; return `${symbols[currency] ?? ""}${Math.max(20, Number(value) || 20)}`; };
 export const formatDate = (value: string) => new Intl.DateTimeFormat("en-ZA", { dateStyle: "medium", timeZone: "Africa/Johannesburg" }).format(new Date(`${value}T12:00:00+02:00`));
 
 export async function getProfile() {
