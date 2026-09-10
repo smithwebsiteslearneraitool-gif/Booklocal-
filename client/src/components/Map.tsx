@@ -76,9 +76,10 @@
 
 /// <reference types="@types/google.maps" />
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePersistFn } from "@/hooks/usePersistFn";
 import { cn } from "@/lib/utils";
+import type { Business } from "@/lib/supabase";
 
 declare global {
   interface Window {
@@ -129,6 +130,7 @@ interface MapViewProps {
   initialCenter?: google.maps.LatLngLiteral;
   initialZoom?: number;
   onMapReady?: (map: google.maps.Map) => void;
+  businesses?: Business[];
 }
 
 export function MapView({
@@ -136,9 +138,12 @@ export function MapView({
   initialCenter = { lat: 37.7749, lng: -122.4194 },
   initialZoom = 12,
   onMapReady,
+  businesses = [],
 }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
+  const markers = useRef<google.maps.Marker[]>([]);
+  const [mapReady, setMapReady] = useState(false);
 
   const init = usePersistFn(async () => {
     try {
@@ -164,13 +169,35 @@ export function MapView({
     if (onMapReady) {
       onMapReady(map.current);
     }
+    setMapReady(true);
   });
 
   useEffect(() => {
     init();
   }, [init]);
 
+  useEffect(() => {
+    if (!map.current || !window.google?.maps) return;
+    markers.current.forEach((marker) => marker.setMap(null));
+    markers.current = businesses.filter((business) => business.latitude != null && business.longitude != null).map((business) => {
+      const marker = new window.google!.maps.Marker({
+        map: map.current!,
+        position: { lat: Number(business.latitude), lng: Number(business.longitude) },
+        title: business.name,
+        icon: { path: window.google!.maps.SymbolPath.CIRCLE, scale: 9, fillColor: "#E9305E", fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 3 },
+      });
+      const info = new window.google!.maps.InfoWindow({ content: `<div style="font-family:Arial,sans-serif;padding:6px 4px;min-width:150px"><strong>${business.name}</strong><br><span>${business.category} · From R${Math.max(20, Number(business.price_from || 20))}</span><br><small>${business.address || business.city || "Pietermaritzburg"}</small></div>` });
+      marker.addListener("click", () => info.open({ map: map.current!, anchor: marker }));
+      return marker;
+    });
+  }, [businesses, mapReady]);
+
+  const useLocation = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(({ coords }) => map.current?.panTo({ lat: coords.latitude, lng: coords.longitude }));
+  };
+
   return (
-    <div ref={mapContainer} className={cn("w-full h-[500px]", className)} />
+    <div className={cn("relative w-full h-[500px]", className)}><div ref={mapContainer} className="h-full w-full" /><button type="button" onClick={useLocation} className="absolute right-4 top-4 rounded-full bg-white px-4 py-2 text-xs font-bold shadow-lg">Use my location</button></div>
   );
 }

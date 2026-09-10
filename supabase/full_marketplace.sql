@@ -81,3 +81,10 @@ update public.businesses set name='PMB Cuts', category='Barber', city='Pietermar
 update public.businesses set name='PMB Beauty Spot', category='Beauty', city='Pietermaritzburg', address='Hayfields, Pietermaritzburg', price_from=20, is_active=true where id='22222222-2222-4222-8222-222222222222';
 update public.businesses set name='PMB Plumbing Help', category='Plumbing', city='Pietermaritzburg', address='Central PMB', price_from=20, is_active=true where id='33333333-3333-4333-8333-333333333333';
 update public.services set price=20 where business_id in ('11111111-1111-4111-8111-111111111111','22222222-2222-4222-8222-222222222222','33333333-3333-4333-8333-333333333333');
+
+-- Map pins: active local businesses are searchable by name/category/city.
+alter table public.businesses add column if not exists latitude double precision;
+alter table public.businesses add column if not exists longitude double precision;
+update public.businesses set name='PMB Cuts',category='Barber',city='Pietermaritzburg',address='Scottsville',price_from=20,latitude=-29.8587,longitude=30.3679,is_active=true where name in ('PMB Cuts','Elite Cuts') or address ilike '%Scottsville%';
+update public.businesses set name='PMB Beauty Spot',category='Beauty',city='Pietermaritzburg',address='Hayfields',price_from=20,latitude=-29.8670,longitude=30.3810,is_active=true where name in ('PMB Beauty Spot','Glow Beauty') or address ilike '%Hayfields%';
+update public.businesses set name='PMB Help',category='Plumbing/Cleaning',city='Pietermaritzburg',address='Central PMB',price_from=20,latitude=-29.6006,longitude=30.3796,is_active=true where name in ('PMB Plumbing Help','Fix-It Plumbing') or address ilike '%Central%';
